@@ -1,8 +1,6 @@
 package com.ctsfinance.zuulservice.filter;
 
-import com.ctsfinance.zuulservice.model.AuthenticationRequest;
-import com.ctsfinance.zuulservice.model.CustomeUser;
-import com.ctsfinance.zuulservice.model.MyUserDteails;
+import com.ctsfinance.zuulservice.model.Response;
 import com.ctsfinance.zuulservice.util.JwtTokenUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.slf4j.Logger;
@@ -11,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -64,10 +60,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         // Once we get the token validate it.
         if (userName != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            AuthenticationRequest authenticationRequest = new AuthenticationRequest();
-            authenticationRequest.setUserName(userName);
+            Response userDetails =  restTemplate.getForObject("http://localhost:8001/login/getUserDetails?username=" + userName, Response.class);
 
-            UserDetails userDetails = restTemplate.getForObject("http://localhost:8001/login/getUserDetails?username=" + userName, UserDetails.class);
+            LOGGER.info("My User Details============:: " + userDetails.getUsername() + " :::: " + userDetails.getPassword());
 
             // if token is valid configure Spring Security to manually set authentication
             if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {

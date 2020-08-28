@@ -1,6 +1,7 @@
 package com.ctsfinance.zuulservice.util;
 
 
+import com.ctsfinance.zuulservice.model.Response;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -65,7 +66,7 @@ public class JwtTokenUtil implements Serializable {
             .signWith(SignatureAlgorithm.HS512, secret).compact();
     }
     //validate token
-    public Boolean validateToken(String token, UserDetails userDetails) {
+    public Boolean validateToken(String token, Response userDetails) {
         final String username = getUsernameFromToken(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
